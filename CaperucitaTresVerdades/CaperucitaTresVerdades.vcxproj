@@ -148,6 +148,7 @@
     <ClInclude Include="Escena2.h" />
     <ClInclude Include="Escena3.h" />
     <ClInclude Include="EscenaLobo.h" />
+    <ClInclude Include="EscenaMuerte.h" />
     <ClInclude Include="Escenario.h" />
     <ClInclude Include="Configuracion.h" />
     <ClInclude Include="HuellaLobo.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Escena2.cpp" />
     <ClCompile Include="Escena3.cpp" />
     <ClCompile Include="EscenaLobo.cpp" />
+    <ClCompile Include="EscenaMuerte.cpp" />
     <ClCompile Include="PantallaInicio.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -75,10 +75,6 @@ public:
 
 	void mover(char tecla) override
 	{
-		// Esconderse ya no depende solo de una tecla: hace falta ademas que
-		// el lobo este en camino y que haya una roca cerca, asi que esa
-		// decision la toma Nivel (que llama directamente a esconderse() /
-		// dejarEsconderse()). Aqui solo se procesa el salto.
 		if (tecla == 'W' || tecla == 'w')
 		{
 			saltar();
@@ -105,9 +101,6 @@ public:
 		}
 		else if (saltoDobleDisponible)
 		{
-			// Segundo salto: se pulsa W otra vez mientras todavia esta en el
-			// aire para ganar mas altura/alcance y alcanzar a pasar un
-			// tronco y unos pinchos seguidos.
 			velocidadY = IMPULSO_SALTO;
 
 			saltoDobleDisponible = false;

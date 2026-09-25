@@ -15,13 +15,16 @@ class Lobo : public Entidad
 {
 private:
 
-    vector<wstring> dibujo;
+    vector<wstring> dibujoDerecha; // cruza de izquierda a derecha
+    vector<wstring> dibujoIzquierda; // cruza de derecha a izquierda (espejado)
+
+    bool haciaLaDerecha;
 
 public:
 
     Lobo()
     {
-        dibujo =
+        dibujoDerecha =
         {
             L"              /\\/\\   ",
             L"             '   •' ¬", // es gracioso que el • genere sonido cada que aparece el lobo
@@ -31,10 +34,21 @@ public:
             L"¯¯ /_  |_    |_ |_   "
         };
 
-        alto = static_cast<int>(dibujo.size());
+        // Version espejada (izquierda-derecha invertidas)
+        dibujoIzquierda =
+        {
+            L"   /\\/\\              ",
+            L"¬ '•   '             ",
+            L" '───    \\______      ",
+            L"   \\          \\┐─_  ",
+            L"    |  |───\\   \\_\\_ ",
+            L"   _| _|    _|  _\\ ¯¯"
+        };
+
+        alto = static_cast<int>(dibujoDerecha.size());
 
         ancho = 0;
-        for (const wstring& linea : dibujo)
+        for (const wstring& linea : dibujoDerecha)
         {
             if (static_cast<int>(linea.size()) > ancho)
             {
@@ -42,28 +56,32 @@ public:
             }
         }
 
+        haciaLaDerecha = true;
+
         x = -ancho;
         y = Y_SUELO - alto;
     }
 
-    // Se llama cada vez que empieza a cruzar (cuando Caperucita se
-    // esconde a tiempo): vuelve a entrar por la izquierda.
-    void reiniciar()
+    void reiniciar(bool nuevaDireccionDerecha)
     {
-        x = -ancho;
+        haciaLaDerecha = nuevaDireccionDerecha;
+
+        // Entra por el lado opuesto al que va a salir.
+        x = haciaLaDerecha ? -ancho : ANCHO_JUEGO;
     }
 
     void avanzar(int velocidad)
     {
         // Cruza mas rapido que el resto del escenario para que se note
-        // que esta pasando de largo. Ahora avanza de izquierda a
-        // derecha.
-        x += velocidad * 4;
+        // que esta pasando de largo.
+        int paso = velocidad * 4;
+
+        x += haciaLaDerecha ? paso : -paso;
     }
 
     bool salioDePantalla()
     {
-        return x >= ANCHO_JUEGO;
+        return haciaLaDerecha ? (x >= ANCHO_JUEGO) : (x < -ancho);
     }
 
     void mostrar() override
@@ -72,6 +90,8 @@ public:
         {
             return;
         }
+
+        const vector<wstring>& dibujo = haciaLaDerecha ? dibujoDerecha : dibujoIzquierda;
 
         Console::ForegroundColor = ConsoleColor::DarkGray;
 

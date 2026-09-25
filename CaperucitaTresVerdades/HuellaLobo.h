@@ -11,8 +11,6 @@
 using namespace std;
 using namespace System;
 
-// La huella ya no quita vidas: al tocarla se dispara la alerta de que
-// el lobo viene (ver Nivel::verificarColisiones / EscenaLobo).
 class HuellaLobo : public ElementoMapa
 {
 private:
@@ -48,19 +46,6 @@ public:
     void actualizar(int velocidad) override
     {
         x -= velocidad;
-
-        // En vez de desaparecer para siempre al salir por la izquierda,
-        // vuelve a aparecer por la derecha a una distancia variable y
-        // mas grande que el resto de obstaculos (GAP_*_HUELLA), para
-        // que las huellas no salgan tan seguido (en promedio, una cada
-        // ~100 columnas).
-        if (x < -ancho)
-        {
-            x = ANCHO_JUEGO + GAP_MINIMO_HUELLA +
-                (rand() % (GAP_MAXIMO_HUELLA - GAP_MINIMO_HUELLA + 1));
-
-            impactoAplicado = false;
-        }
     }
 
     void mostrar() override

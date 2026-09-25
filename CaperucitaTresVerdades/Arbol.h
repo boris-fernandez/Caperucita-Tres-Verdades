@@ -62,10 +62,6 @@ public:
     {
         x -= velocidad;
 
-        // En vez de desaparecer para siempre al salir por la izquierda
-        // (que era el bug: despues de un rato ya no quedaban arboles ni
-        // arbustos en el camino), vuelve a aparecer por la derecha a una
-        // distancia aleatoria, igual que las rocas, troncos y huellas.
         if (x < -ancho)
         {
             x = ANCHO_JUEGO + GAP_MINIMO_OBSTACULO +

@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <vector>
+#include <utility>
+#include <cstdlib>
 
 #include "Configuracion.h"
 #include "ElementoMapa.h"
@@ -25,11 +27,13 @@ private:
 
     vector<ElementoMapa*> elementos;
 
+    vector<pair<HuellaLobo*, Roca*>> paresHuellaRoca;
+
 public:
 
     Escenario()
     {
-        velocidad = 1;
+        velocidad = 2;
 
         crearDecoracion();
         crearPeligros();
@@ -110,40 +114,30 @@ public:
 
     void crearPeligros()
     {
-        // Cada huella deja una roca cerca (a una distancia que el lobo
-        // tarda en cruzar en FRAMES_ALERTA_LOBO), para que siempre haya
-        // donde esconderse si se reacciona a tiempo.
-        elementos.push_back(
-            new HuellaLobo(60)
-        );
+        // Cada huella deja una roca cerca (DISTANCIA_HUELLA_ANTES_DE_ROCA
+        // columnas por delante), para que siempre haya donde esconderse
+        // si se reacciona a tiempo. Ambas se reubican juntas cuando
+        // reciclan (ver reubicarParHuellaRoca).
+        crearParHuellaRoca(60);
 
-        elementos.push_back(
-            new Roca(90)
-        );
+        elementos.push_back(new Tronco(130));
+        elementos.push_back(new Pinchos(160));
 
-        elementos.push_back(
-            new Tronco(130)
-        );
+        crearParHuellaRoca(210);
 
-        elementos.push_back(
-            new Pinchos(160)
-        );
+        elementos.push_back(new Tronco(280));
+        elementos.push_back(new Pinchos(310));
+    }
 
-        elementos.push_back(
-            new HuellaLobo(210)
-        );
+    void crearParHuellaRoca(int xHuella)
+    {
+        HuellaLobo* huella = new HuellaLobo(xHuella);
+        Roca* roca = new Roca(xHuella + DISTANCIA_HUELLA_ANTES_DE_ROCA);
 
-        elementos.push_back(
-            new Roca(240)
-        );
+        elementos.push_back(huella);
+        elementos.push_back(roca);
 
-        elementos.push_back(
-            new Tronco(280)
-        );
-
-        elementos.push_back(
-            new Pinchos(310)
-        );
+        paresHuellaRoca.push_back({ huella, roca });
     }
 
 
@@ -159,6 +153,94 @@ public:
         {
             elemento->actualizar(velocidad);
         }
+
+        // Pares huella+roca: se reubican juntas solo cuando la roca (que
+        // siempre va detras, mas cerca del jugador en el recorrido) ya
+        // salio de pantalla. Si se disparara con solo la huella saliendo,
+        // la roca se teletransportaria lejos mientras el jugador todavia
+        // se esta acercando a ella.
+        for (auto& par : paresHuellaRoca)
+        {
+            HuellaLobo* huella = par.first;
+            Roca* roca = par.second;
+
+            if (roca->getX() < -roca->getAncho())
+            {
+                reubicarParHuellaRoca(huella, roca);
+            }
+        }
+
+        // Tronco y pinchos "sueltos" (no forman parte de un par): cada
+        // uno que sale de pantalla se reubica por separado, siempre
+        // respetando el hueco minimo con el peligro mas adelantado que
+        // ya este en pantalla.
+        for (ElementoMapa* elemento : elementos)
+        {
+            bool esSuelto =
+                dynamic_cast<Tronco*>(elemento) != nullptr ||
+                dynamic_cast<Pinchos*>(elemento) != nullptr;
+
+            if (!esSuelto)
+            {
+                continue;
+            }
+
+            if (elemento->getX() < -elemento->getAncho())
+            {
+                int nuevaX = proximaPosicionLibre(elemento);
+                elemento->reubicar(nuevaX);
+            }
+        }
+    }
+
+    // Reubica juntas una huella y su roca, dejando la huella primero y
+    // la roca DISTANCIA_HUELLA_ANTES_DE_ROCA columnas por delante, sin
+    // quedar pegadas a ningun otro peligro que ya este en pantalla.
+    void reubicarParHuellaRoca(HuellaLobo* huella, Roca* roca)
+    {
+        int base = proximaPosicionLibre(huella, roca);
+
+        huella->reubicar(base);
+        roca->reubicar(base + DISTANCIA_HUELLA_ANTES_DE_ROCA);
+    }
+
+    // Calcula una posicion X para un peligro nuevo que deje siempre al
+    // menos GAP_MINIMO_OBSTACULO columnas libres respecto al peligro (o
+    // huella/roca) mas adelantado que ya este en pantalla. Asi nunca
+    // salen dos peligros pegados o encimados, sin importar el orden en
+    // el que cada uno haya reciclado.
+    int proximaPosicionLibre(ElementoMapa* excluir1, ElementoMapa* excluir2 = nullptr)
+    {
+        int extremo = ANCHO_JUEGO;
+
+        for (ElementoMapa* elemento : elementos)
+        {
+            if (elemento == excluir1 || elemento == excluir2)
+            {
+                continue;
+            }
+
+            bool ocupaEspacio =
+                elemento->esPeligroso() ||
+                elemento->esEscondite() ||
+                elemento->activaAlertaLobo();
+
+            if (!ocupaEspacio)
+            {
+                continue;
+            }
+
+            int derecha = elemento->getX() + elemento->getAncho();
+
+            if (derecha > extremo)
+            {
+                extremo = derecha;
+            }
+        }
+
+        int rango = GAP_MAXIMO_OBSTACULO - GAP_MINIMO_OBSTACULO + 1;
+
+        return extremo + GAP_MINIMO_OBSTACULO + (rand() % rango);
     }
 
 

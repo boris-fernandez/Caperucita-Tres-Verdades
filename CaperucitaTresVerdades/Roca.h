@@ -11,9 +11,6 @@
 using namespace std;
 using namespace System;
 
-// La roca ya no quita vidas: ahora es un escondite. Si el lobo viene y
-// Caperucita esta cerca de una roca, puede esconderse detras de ella
-// (tecla S) para dejarlo pasar sin recibir danio.
 class Roca : public ElementoMapa
 {
 private:
@@ -50,17 +47,6 @@ public:
     void actualizar(int velocidad) override
     {
         x -= velocidad;
-
-        // En vez de desaparecer para siempre al salir por la izquierda,
-        // vuelve a aparecer por la derecha a una distancia variable,
-        // como una nueva roca que llega en el camino.
-        if (x < -ancho)
-        {
-            x = ANCHO_JUEGO + GAP_MINIMO_OBSTACULO +
-                (rand() % (GAP_MAXIMO_OBSTACULO - GAP_MINIMO_OBSTACULO + 1));
-
-            impactoAplicado = false;
-        }
     }
 
     void mostrar() override

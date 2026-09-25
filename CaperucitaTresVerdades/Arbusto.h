@@ -51,9 +51,6 @@ public:
     {
         x -= velocidad;
 
-        // Igual que el arbol: en vez de desaparecer para siempre al
-        // salir por la izquierda, vuelve a aparecer por la derecha a
-        // una distancia aleatoria.
         if (x < -ancho)
         {
             x = ANCHO_JUEGO + GAP_MINIMO_OBSTACULO +
