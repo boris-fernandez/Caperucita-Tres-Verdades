@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "Entidad.h"
 
 class ElementoMapa : public Entidad
@@ -20,20 +22,27 @@ public:
 
 	virtual void actualizar(int velocidad) = 0;
 
+	virtual void reubicar(int nuevaX)
+	{
+		x = nuevaX;
+		impactoAplicado = false;
+	}
+
 	virtual bool esPeligroso()
 	{
 		return false;
 	}
 
-	// Indica si Caperucita puede esconderse junto a este elemento (por
-	// ahora, solo las rocas) cuando el lobo esta en camino.
+	virtual std::string getCausaMuerte()
+	{
+		return "obstaculo";
+	}
+
 	virtual bool esEscondite()
 	{
 		return false;
 	}
 
-	// Indica si, al tocarlo, este elemento dispara la alerta de que el
-	// lobo viene (por ahora, solo las huellas).
 	virtual bool activaAlertaLobo()
 	{
 		return false;

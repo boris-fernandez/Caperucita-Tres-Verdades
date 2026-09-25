@@ -17,38 +17,6 @@
 using namespace System;
 using namespace std;
 
-// Fija el tamanio de la ventana de consola una unica vez, al arrancar el
-// juego, para que las escenas cinematicas y el nivel jugable usen siempre
-// el mismo espacio en pantalla (en vez de que el nivel se vea "chico"
-// dentro de una ventana pensada para las escenas). Si la pantalla o la
-// fuente actual no permiten ese tamanio, Windows lo recorta solo al
-// maximo posible: por eso se deja envuelto en try/catch.
-void ajustarVentanaConsola()
-{
-    try
-    {
-        // 1) Primero se encoge la ventana a algo pequenio y seguro,
-        //    porque Windows no deja agrandar la ventana mas alla del
-        //    buffer actual.
-        Console::SetWindowSize(1, 1);
-
-        // 2) Se agranda el buffer (el "lienzo" donde se puede dibujar).
-        int anchoBuffer = Math::Min(ANCHO_VENTANA, Console::LargestWindowWidth);
-        int altoBuffer = Math::Min(ALTO_VENTANA, Console::LargestWindowHeight);
-
-        Console::SetBufferSize(anchoBuffer, altoBuffer);
-
-        // 3) Y por ultimo se agranda la ventana hasta ese mismo tamanio.
-        Console::SetWindowSize(anchoBuffer, altoBuffer);
-    }
-    catch (...)
-    {
-        // Si la consola no permite cambiar el tamanio (por ejemplo, al
-        // ejecutar dentro de algunos terminales o con la salida
-        // redirigida), simplemente se sigue con el tamanio que ya tenia.
-    }
-}
-
 void ejecutarNivel1()
 {
     Nivel nivel1;
@@ -81,13 +49,21 @@ void ejecutarNivel1()
     if (nivel1.estaCompletado())
     {
         mostrarCasaFinal();
-
-        Console::SetCursorPosition(0, 17);
-        cout << "NIVEL COMPLETADO - Llegaste a la casa de la abuela";
     }
-    else if (nivel1.jugadorVivo())
+    else if (!nivel1.jugadorVivo())
     {
-        cout << "GAME OVER";
+        Console::ForegroundColor = ConsoleColor::Red;
+        Console::WriteLine(R"ASCIIART(
+
+
+                ____      _      __  __   _____      ___   __     __  _____   ____  
+               / ___|    / \    |  \/  | | ____|    / _ \  \ \   / / | ____| |  _ \ 
+              | |  _    / _ \   | |\/| | |  _|     | | | |  \ \ / /  |  _|   | |_) |
+              | |_| |  / ___ \  | |  | | | |___    | |_| |   \ V /   | |___  |  _ < 
+               \____| /_/   \_\ |_|  |_| |_____|    \___/     \_/    |_____| |_| \_\
+
+
+)ASCIIART");
     }
 
     _getch();
@@ -100,8 +76,6 @@ int main()
     // Semilla para que las rocas, troncos y huellas reaparezcan con
     // espaciados aleatorios distintos en cada partida.
     srand(static_cast<unsigned int>(time(nullptr)));
-
-    ajustarVentanaConsola();
 
     PantallaInicio();
 

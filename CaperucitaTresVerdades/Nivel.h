@@ -6,6 +6,7 @@
 #include "Escenario.h"
 #include "Lobo.h"
 #include "EscenaLobo.h"
+#include "EscenaMuerte.h"
 
 class Nivel
 {
@@ -21,18 +22,15 @@ private:
     Caperucita* jugador;
     Escenario* escenario;
 
-    // ---- ALERTA DEL LOBO ----
-    // Se activa al tocar una huella: el lobo viene, y hay que
-    // esconderse detras de una roca cercana antes de que se acabe la
-    // cuenta regresiva, o Caperucita pierde una vida.
     bool loboEnCamino;
     int cuentaRegresivaLobo;
 
-    // Mientras el lobo esta cruzando la pantalla (porque Caperucita se
-    // escondio a tiempo), el mundo se congela: no se mueve el escenario
-    // ni el jugador, solo se anima al lobo pasando.
     bool loboPasando;
     Lobo* lobo;
+
+    int vecesQueCruzoLobo;
+
+    bool muerteMostrada;
 
 public:
 
@@ -40,12 +38,6 @@ public:
     {
         numero = 1;
 
-        distancia = 0;
-        // Antes terminaba en 100: con velocidad 1, eso son solo 100
-        // "columnas" de recorrido, y ni la huella de lobo (colocada en
-        // x = 130) llegaba a aparecer antes de que el nivel terminara.
-        // Se alarga para que se note el reciclado de rocas/troncos/
-        // pinchos/huellas.
         distanciaMeta = 400;
 
         completado = false;
@@ -59,6 +51,10 @@ public:
 
         loboPasando = false;
         lobo = new Lobo();
+
+        vecesQueCruzoLobo = 0;
+
+        muerteMostrada = false;
     }
 
     ~Nivel()
@@ -66,6 +62,17 @@ public:
         delete jugador;
         delete escenario;
         delete lobo;
+    }
+
+    // Primera vez: izquierda->derecha. Segunda: derecha->izquierda. Y
+    // asi se va alternando en cada cruce.
+    bool siguienteDireccionLoboEsDerecha()
+    {
+        bool esDerecha = (vecesQueCruzoLobo % 2 == 0);
+
+        vecesQueCruzoLobo++;
+
+        return esDerecha;
     }
 
     void procesarEntrada(char tecla)
@@ -86,15 +93,12 @@ public:
             loboEnCamino &&
             hayRocaCerca())
         {
-            // Se esconde justo a tiempo: el lobo pasara de largo. La
-            // roca se queda visible en todo momento (Caperucita se
-            // agacha junto a ella, sin taparla).
             jugador->esconderse();
 
             loboEnCamino = false;
 
             loboPasando = true;
-            lobo->reiniciar();
+            lobo->reiniciar(siguienteDireccionLoboEsDerecha());
 
             return;
         }
@@ -106,8 +110,6 @@ public:
     {
         if (jugador->estaEscondido())
         {
-            // El mundo se congela mientras esta escondida: solo avanza
-            // la animacion del lobo cruzando el camino.
             if (loboPasando)
             {
                 lobo->avanzar(escenario->getVelocidad());
@@ -142,13 +144,18 @@ public:
         verificarColisiones();
         verificarAlertaLobo();
 
+        if (!jugador->estaVivo() && !muerteMostrada)
+        {
+            muerteMostrada = true;
+
+            EscenaMuerte(jugador->getCausaMuerte());
+        }
+
         distancia++;
 
         verificarMeta();
     }
 
-    // Hay una roca lo bastante cerca (en X) del jugador como para
-    // esconderse detras de ella.
     bool hayRocaCerca()
     {
         for (ElementoMapa* elemento : escenario->getElementos())
@@ -199,7 +206,7 @@ public:
 
             if (elemento->esPeligroso())
             {
-                jugador->recibirDanio();
+                jugador->recibirDanio(elemento->getCausaMuerte());
 
                 elemento->marcarImpacto();
             }
@@ -234,9 +241,9 @@ public:
             loboEnCamino = false;
 
             loboPasando = true;
-            lobo->reiniciar();
+            lobo->reiniciar(siguienteDireccionLoboEsDerecha());
 
-            jugador->recibirDanio();
+            jugador->recibirDanio("lobo");
         }
     }
 

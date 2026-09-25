@@ -1,18 +1,6 @@
 #pragma once
 
-// ---- TAMANIO DE LA VENTANA DE CONSOLA ----
-// Se usan para fijar, una unica vez en main(), el mismo tamanio de
-// ventana/buffer que usan las escenas cinematicas (Escena1/2/3), para que
-// el nivel jugable ocupe el mismo espacio visual en pantalla.
-const int ANCHO_VENTANA = 160;
-const int ALTO_VENTANA = 46;
-
 // ---- TAMANIO DEL MUNDO DEL NIVEL ----
-// El ancho jugable y la altura del suelo se agrandaron para aprovechar
-// la ventana mas grande de arriba. Esto es lo que realmente hace que el
-// nivel "se vea mas grande": no es el tamanio de letra (la consola usa
-// una sola fuente para todo, escenas y nivel), sino cuantas columnas y
-// filas de caracteres usa el dibujo del nivel.
 const int ANCHO_JUEGO = 150;
 
 const int Y_SUELO = 34;
@@ -27,30 +15,33 @@ const int FILA_CONTROLES = Y_SUELO + 6;
 // La gravedad vuelve a 1 (con 2 caia demasiado rapido y era muy dificil
 // esquivar). El impulso se deja un poco mas fuerte que el original para
 // que el salto siga sintiendose un poco mas agil/alto.
-const int IMPULSO_SALTO = -4; // fuerza hacia arriba de cada salto (mas negativo = salto mas alto)
+const int IMPULSO_SALTO = -3; // fuerza hacia arriba de cada salto (mas negativo = salto mas alto)
 const int GRAVEDAD = 1;       // cuanto frena/empieza a caer Caperucita en cada frame
 
-// ---- REAPARICION DE OBSTACULOS ----
-// Cuando una roca, tronco, pinchos, arbol, arbusto o huella de lobo sale
-// de la pantalla por la izquierda, vuelve a aparecer por la derecha a
-// una distancia aleatoria entre estos dos valores (en vez de
-// desaparecer para siempre).
+// ---- REAPARICION DE OBSTACULOS Y HUELLAS ----
+// Cuando una roca, tronco, pinchos o par huella+roca sale de la
+// pantalla por la izquierda, Escenario lo reubica por la derecha a una
+// distancia aleatoria entre estos dos valores, medida siempre desde el
+// peligro/huella/roca mas adelantado que ya este en pantalla (nunca
+// menos que eso), para que nunca queden dos peligros pegados entre si.
 const int GAP_MINIMO_OBSTACULO = 18;
 const int GAP_MAXIMO_OBSTACULO = 45;
-
-// ---- REAPARICION DE LA HUELLA DE LOBO ----
-// Las huellas usan un espacio propio (mucho mas grande que el resto de
-// obstaculos) para que no aparezcan tan seguido: en promedio, una cada
-// ~100 columnas de distancia recorrida.
-const int GAP_MINIMO_HUELLA = 90;
-const int GAP_MAXIMO_HUELLA = 110;
 
 // ---- ESCONDITE Y ALERTA DEL LOBO ----
 // Que tan cerca (en columnas) tiene que estar Caperucita de una roca
 // para poder esconderse detras de ella.
-const int DISTANCIA_ESCONDITE = 8;
+const int DISTANCIA_ESCONDITE = 4;
 
 // Cuantos frames pasan, despues de pisar una huella, antes de que el
 // lobo llegue. Si para entonces Caperucita no se escondio, pierde una
 // vida.
 const int FRAMES_ALERTA_LOBO = 55;
+
+// Cada huella queda "enganchada" a la roca que le sigue: cuando la
+// huella se reubica, la roca se reubica junto con ella, siempre esta
+// misma cantidad de columnas por delante. Con esto la huella SIEMPRE
+// aparece antes que su roca (nunca despues) y con margen de sobra para
+// llegar a esconderse dentro de FRAMES_ALERTA_LOBO.
+const int DISTANCIA_HUELLA_ANTES_DE_ROCA = 30;
+
+//@sherlyn de repente con estas configuraciones podemos hacer dificultades: facil-medio-dificil-extremo o algo asi

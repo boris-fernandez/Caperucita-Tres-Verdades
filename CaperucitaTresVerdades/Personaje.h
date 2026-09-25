@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "Entidad.h"
 
 class Personaje : public Entidad
@@ -7,17 +9,16 @@ class Personaje : public Entidad
 protected:
 
 	int vidas;
-
-	// Indica si el personaje esta escondido (por ejemplo, detras de una
-	// roca). Mientras esta escondido es invulnerable, pero tampoco puede
-	// moverse ni saltar.
 	bool escondido;
+
+	std::string causaMuerte;
 
 public: 
 	Personaje() {
 
 		vidas = 3;
 		escondido = false;
+		causaMuerte = "";
 	
 	}
 
@@ -35,8 +36,10 @@ public:
 		escondido = false;
 	}
 
-	void recibirDanio()
+	void recibirDanio(const std::string& causa)
 	{
+		causaMuerte = causa;
+
 		if (vidas > 0)
 		{
 			vidas--;
@@ -49,4 +52,6 @@ public:
 	bool estaEscondido() { return escondido; }
 
 	int getVidas() { return vidas; }
+
+	std::string getCausaMuerte() { return causaMuerte; }
 };

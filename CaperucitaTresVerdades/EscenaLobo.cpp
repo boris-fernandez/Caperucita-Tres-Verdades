@@ -5,8 +5,6 @@
 using namespace System;
 
 // Escena de aviso: se dispara al pisar una huella de lobo en el nivel.
-// PLACEHOLDER: el arte final de esta escena lo hace el usuario; por
-// ahora solo avisa que el lobo viene y que hay que esconderse.
 void EscenaLobo()
 {
     Console::Clear();
