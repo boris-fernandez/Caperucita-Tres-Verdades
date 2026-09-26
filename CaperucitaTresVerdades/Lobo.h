@@ -11,7 +11,7 @@ using namespace std;
 using namespace System;
 
 
-class Lobo : public Entidad
+class Lobo : public Personaje
 {
 private:
 
@@ -116,4 +116,8 @@ public:
 
         Console::ResetColor();
     }
+
+    void mover(char tecla) override {};
+    void actualizar() override {};
+    void saltar() override {};
 };
