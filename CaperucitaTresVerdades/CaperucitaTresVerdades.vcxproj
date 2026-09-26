@@ -154,6 +154,7 @@
     <ClInclude Include="HuellaLobo.h" />
     <ClInclude Include="Lobo.h" />
     <ClInclude Include="Nivel.h" />
+    <ClInclude Include="RenderNivel1.h" />
     <ClInclude Include="Obstaculo.h" />
     <ClInclude Include="PantallaInicio.h" />
     <ClInclude Include="pch.h" />

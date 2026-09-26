@@ -1,4 +1,5 @@
 #pragma once
+#include "RenderNivel1.h"
 
 #include <iostream>
 #include <vector>
@@ -50,9 +51,9 @@ public:
     void mostrar() override
     {
         if (!visible) return;
-        if (x < 0 || x + ancho >= ANCHO_JUEGO) return;
+        if (x + ancho <= 0 || x >= ANCHO_JUEGO) return;
 
-        Console::ForegroundColor = ConsoleColor::Blue;
+        RenderNivel1::instancia().Color(ConsoleColor::Blue);
 
         for (int fila = 0; fila < static_cast<int>(dibujo.size()); fila++)
         {
@@ -60,15 +61,15 @@ public:
             {
                 wchar_t caracter = dibujo[fila][col];
 
-                if (caracter != L' ')
+                if (caracter != L' ' && x + col >= 0 && x + col < ANCHO_JUEGO)
                 {
-                    Console::SetCursorPosition(x + col, y + fila);
-                    Console::Write(caracter);
+                    RenderNivel1::instancia().SetCursorPosition(x + col, y + fila);
+                    RenderNivel1::instancia().Write(caracter);
                 }
             }
         }
 
-        Console::ResetColor();
+        RenderNivel1::instancia().ResetColor();
     }
 
     bool esPeligroso() override

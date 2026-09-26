@@ -173,7 +173,7 @@ int SelectorNiveles()
 {
     int opcion = 0;
 
-    while (opcion != 1 && opcion != 2 && opcion != 3 && opcion != 4)
+    // Una sola presentacion por visita; las teclas invalidas no redibujan el arte.
     {
         Console::Clear();
 
@@ -205,11 +205,18 @@ int SelectorNiveles()
         cout << "[4] Salir\n\n";
         cout << "Selecciona un nivel: ";
 
-        char tecla = _getch();
-
-        if (tecla >= '1' && tecla <= '4')
+        while (opcion == 0)
         {
-            opcion = tecla - '0';
+            const int tecla = _getch();
+            if (tecla == 0 || tecla == 224)
+            {
+                _getch();
+                continue;
+            }
+            if (tecla >= '1' && tecla <= '4')
+            {
+                opcion = tecla - '0';
+            }
         }
     }
 

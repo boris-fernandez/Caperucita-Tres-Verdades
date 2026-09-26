@@ -8,7 +8,7 @@ void Escena1()
 {
     Console::Clear();
 
-    // ----ASCII ART DE FONDO(el bosque) ----
+    // ASCII ART DE FONDO(el bosque)
     Console::ForegroundColor = ConsoleColor::Red;
     Console::WriteLine(R"ASCIIART(
                                                                                             .::.                                                        
@@ -34,33 +34,25 @@ void Escena1()
   :   .:+;:::::. +:                    :. .:::.                    ;;;;;;;              :.                                     :              .+   .. :.
   .: ..        ::                        .:.                      ;;;;;;;;;            :.                                    .:                 ; :  :  
    ..  :.   .:                              ::                   :;;;;;;;;;:         ::                                .       .;:            :  :  :   
-    ..  .:;;.  .........::.....+............                    ;;;;;;;;;;. ..     .;                                 :.;      :               :+ .:    
-     .:   ..             :     ;                               :;;;;;;;;.         :.                                 :.  :.  .:                  +.     
-       ;    :.           :     :.                            ;.     + .:        .:                                 .:     .:::                 .:       
-        ;     ;          :      :                          ;.      ;.  :       :.                                .;         ::     ..;::..;  .;.        
-         :;;;.          :        :                       ;.       ;:   .::    :.                               ::             ::     ..   : .:          
-          ..               .:.                         ;.                    :.                                  .;.        .;;;+.   :.   ;:.           
-           :.                                        +                      .:                                  ;:            ::     .;:.:+             
-           ::                                     .;                        +                                ::                  ;:      +              
-        ;                                        :.                        ;                               ;.                      .;.        :         
-         :.                                    ::                          ;                                        .;;::::+::::.           ..          
-          .:                                  ;                           :.                                         ..    ;               :.           
-            :                               .:                            ;                                          :.    :             .:             
-             .:                            :.                            :.                                           .....            .:               
-               ;                          :.                             :                                                            :.                
-                :                        ..                             :.                                                          :.                  
-             :;:                         :                             .:                                                          ;                    
-.::;;;;;:.                              ..                             ..                                                        ;.                     
-    :                                  .:                              :                                                        ;                       
-    :.                                 ;                               :                                                          ;:                    
-     :                                ;                                :                                                              :;;:.             
-     :                              .:                                 :                                                                          .;+:::
-::::                               :.                                  .:                                                                          .    
+        .:;;.  .........::.....+............                    ;;;;;;;;;;. ..     .;                                 :.;      :               :+ .:    
+                         :     ;                               :;;;;;;;;.         :.                                 :.  :.  .:                  +.     
+                         :     :.                            ;.     + .:        .:                                 .:     .:::                 .:       
+                         :      :                          ;.      ;.  :       :.                                .;         ::     ..;::..;  .;.        
+                        :        :                       ;.       ;:   .::    :.                               ::             ::     ..   : .:          
+                           .:.                         ;.                    :.                                  .;.        .;;;+.   :.   ;:.           
+                                                     +                      .:                                  ;:            ::     .;:.:+             
+                                                  .;                        +                                ::                  ;:      +              
+                                                 :.                        ;                               ;.                      .;.        :         
+                                               ::                          ;                                .;;:::.;;::::+::::. ;;:::          ..          
+                                              ;                           :.                                         ..    ;               :.           
+                                            .:                            ;                                          :.    :             .:             
+                                           :.                            :.                                           .....            .:               
+   
 )ASCIIART");
     Console::ResetColor();
     Console::WriteLine();
 
-    // ---- MEMORIA DE CAPERUCITA ----
+    // MEMORIA DE CAPERUCITA
     Console::ForegroundColor = ConsoleColor::Red;
     Console::WriteLine("> MEMORIA DE CAPERUCITA:");
     Console::ForegroundColor = ConsoleColor::Gray;
@@ -69,14 +61,13 @@ void Escena1()
     Console::WriteLine("   Siento que alguien me esta observando desde la espesura...\"");
     Console::WriteLine();
 
-    // ---- OBJETIVO DEL NIVEL ----
+    // OBJETIVO DEL NIVEL
     Console::ForegroundColor = ConsoleColor::Yellow;
     Console::WriteLine("> OBJETIVO DEL NIVEL:");
     Console::ForegroundColor = ConsoleColor::Gray;
     Console::WriteLine("  Cruza el bosque, esquiva las trampas del camino y evita al Lobo a toda costa.");
     Console::WriteLine();
 
-    // ---- PROMPT DE CONTINUAR ----
     Console::ForegroundColor = ConsoleColor::DarkGray;
     Console::WriteLine("[ Presiona cualquier tecla para continuar... ]");
     Console::ResetColor();

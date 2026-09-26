@@ -1,8 +1,6 @@
 #pragma once
-#include "RenderNivel1.h"
 #include <iostream>
 #include <cstdlib>
-#include <cstdio>
 
 #include "Caperucita.h"
 #include "Escenario.h"
@@ -86,13 +84,13 @@ private:
             {
                 if (x + col >= 0 && x + col < ANCHO_JUEGO)
                 {
-                    RenderNivel1::instancia().SetCursorPosition(x + col, y + fila);
-                    RenderNivel1::instancia().Write(L' ');
+                    Capture::SetCursorPosition(x + col, y + fila);
+                    Capture::Write(L' ');
                 }
             }
         }
 
-        RenderNivel1::instancia().Color(System::ConsoleColor::DarkYellow);
+        Capture::ForegroundColor = System::ConsoleColor::DarkYellow;
         for (int fila = 0; fila < alto; fila++)
         {
             for (int col = 0; dibujo[fila][col] != '\0'; col++)
@@ -100,12 +98,12 @@ private:
                 const int columna = x + col;
                 if (columna >= 0 && columna < ANCHO_JUEGO && dibujo[fila][col] != L' ')
                 {
-                    RenderNivel1::instancia().SetCursorPosition(columna, y + fila);
-                    RenderNivel1::instancia().Write(dibujo[fila][col]);
+                    Capture::SetCursorPosition(columna, y + fila);
+                    Capture::Write(dibujo[fila][col]);
                 }
             }
         }
-        RenderNivel1::instancia().ResetColor();
+        Capture::ResetColor();
     }
 
 public:
@@ -156,6 +154,8 @@ public:
     {
         if (jugador->estaEscondido())
         {
+            // Mientras esta escondida, la unica accion posible es salir
+            // del escondite.
             if (tecla == 'E' || tecla == 'e')
             {
                 jugador->dejarEsconderse();
@@ -207,6 +207,7 @@ public:
 
         jugador->actualizar();
 
+        // Mantiene la llegada a la casa sin suspender el resto del nivel.
         if (distancia >= inicioLlegada())
         {
             jugador->avanzarHastaMeta(getCasaX(), escenario->getVelocidad());
@@ -329,6 +330,9 @@ public:
 
         if (cuentaRegresivaLobo <= 0)
         {
+            // El lobo llego y Caperucita no alcanzo a esconderse: se lo
+            // ve cruzar la pantalla (sin congelar el mundo esta vez) y
+            // pierde una vida.
             loboEnCamino = false;
 
             loboPasando = true;
@@ -361,23 +365,45 @@ public:
             lobo->mostrar();
         }
 
-        auto& render = RenderNivel1::instancia();
-        render.texto(0, 1, "CAPERUCITA ROJA Nivel 1: El sendero de las huellas");
-        char hud[80];
-        std::snprintf(hud, sizeof(hud), "Vidas: %d", jugador->getVidas());
-        render.texto(0, 2, hud);
-        std::snprintf(hud, sizeof(hud), "Distancia: %d / %d", distancia, distanciaMeta);
-        render.texto(0, 3, hud);
+        Capture::SetCursorPosition(0, 1);
+
+        std::cout
+            << "CAPERUCITA ROJA ";
+
+        std::cout
+            << "Nivel 1: El sendero de las huellas";
+
+        Capture::SetCursorPosition(0, 2);
+
+        std::cout
+            << "Vidas: "
+            << jugador->getVidas();
+
+        Capture::SetCursorPosition(0, 3);
+
+        std::cout
+            << "Distancia: "
+            << distancia
+            << " / "
+            << distanciaMeta;
+
+        Capture::SetCursorPosition(0, 4);
+
         if (jugador->estaEscondido())
         {
-            render.texto(0, 4, "Escondida detras de la roca... presiona E para salir");
+            std::cout
+                << "Escondida detras de la roca... presiona E para salir";
         }
         else if (loboEnCamino)
         {
-            render.texto(0, 4, "El lobo viene! Busca una roca cerca y presiona S para esconderte");
+            std::cout
+                << "El lobo viene! Busca una roca cerca y presiona S para esconderte";
         }
-        render.texto(0, FILA_CONTROLES,
-            "W = Saltar | S = Esconderse junto a una roca | E = Salir del escondite | ESC = Salir");
+
+        Capture::SetCursorPosition(0, FILA_CONTROLES);
+
+        std::cout
+            << "W = Saltar | S = Esconderse junto a una roca | E = Salir del escondite | ESC = Salir";
     }
 
     bool estaCompletado()

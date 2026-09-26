@@ -1,5 +1,4 @@
 #pragma once
-#include "RenderNivel1.h"
 
 #include <iostream>
 #include <vector>
@@ -56,6 +55,7 @@ public:
 
     void crearDecoracion()
     {
+        // Conserva los cuatro grupos, con aire entre copas y arbustos.
         for (int i = 0; i < GRUPOS_DECORACION; i++)
         {
             const int x = 20 + i * ESPACIO_GRUPO_DECORACION;
@@ -83,6 +83,10 @@ public:
 
     void crearPeligros()
     {
+        // Cada huella deja una roca cerca (DISTANCIA_HUELLA_ANTES_DE_ROCA
+        // columnas por delante), para que siempre haya donde esconderse
+        // si se reacciona a tiempo. Ambas se reubican juntas cuando
+        // reciclan (ver reubicarParHuellaRoca).
         crearParHuellaRoca(60);
 
         elementos.push_back(new Tronco(130));
@@ -138,10 +142,17 @@ public:
             }
         }
 
+        // Tronco y pinchos "sueltos" (no forman parte de un par): cada
+        // uno que sale de pantalla se reubica por separado, siempre
+        // respetando el hueco minimo con el peligro mas adelantado que
+        // ya este en pantalla.
         for (ElementoMapa* elemento : elementos)
         {
-            // Los unicos peligros sueltos actuales son troncos y pinchos.
-            if (!elemento->esPeligroso())
+            bool esSuelto =
+                dynamic_cast<Tronco*>(elemento) != nullptr ||
+                dynamic_cast<Pinchos*>(elemento) != nullptr;
+
+            if (!esSuelto)
             {
                 continue;
             }
@@ -154,6 +165,9 @@ public:
         }
     }
 
+    // Reubica juntas una huella y su roca, dejando la huella primero y
+    // la roca DISTANCIA_HUELLA_ANTES_DE_ROCA columnas por delante, sin
+    // quedar pegadas a ningun otro peligro que ya este en pantalla.
     void reubicarParHuellaRoca(HuellaLobo* huella, Roca* roca)
     {
         int base = proximaPosicionLibre(huella, roca);
@@ -204,19 +218,20 @@ public:
 
     void mostrarCamino()
     {
-        RenderNivel1::instancia().Color(ConsoleColor::Green);
+        Capture::ForegroundColor =
+            ConsoleColor::Green;
 
-        RenderNivel1::instancia().SetCursorPosition(
+        Capture::SetCursorPosition(
             0,
             Y_SUELO
         );
 
         for (int i = 0; i < ANCHO_JUEGO; i++)
         {
-            RenderNivel1::instancia().Write(L'~');
+            cout << "~";
         }
 
-        RenderNivel1::instancia().ResetColor();
+        Capture::ResetColor();
     }
 
     void mostrar()

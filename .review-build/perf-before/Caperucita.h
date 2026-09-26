@@ -1,5 +1,4 @@
 #pragma once
-#include "RenderNivel1.h"
 
 #include <iostream>
 #include <vector>
@@ -23,6 +22,9 @@ private:
 	int velocidadY;
 	int yBase;
 
+	// Permite un segundo impulso mientras esta en el aire (doble salto),
+	// util para encadenar un salto extra y pasar un tronco y unos pinchos
+	// que aparecen seguidos.
 	bool saltoDobleDisponible;
 
 public:
@@ -40,6 +42,8 @@ public:
 			L"/____\\ "
 		};
 
+		// Se dibuja cuando Caperucita se esconde detras de una roca cercana
+		// para dejar pasar al lobo.
 		dibujoEscondida =
 		{
 			L"    ___",
@@ -92,14 +96,18 @@ public:
 	{
 		if (escondido)
 		{
+			// No puede saltar mientras esta escondida detras de la roca.
 			return;
 		}
 
 		if (!saltando)
 		{
+			// Primer salto: despega desde el suelo.
 			saltando = true;
+			// Valor negativo = subir
 			velocidadY = IMPULSO_SALTO;
 
+			// Al despegar, habilita el segundo salto en el aire.
 			saltoDobleDisponible = true;
 		}
 		else if (saltoDobleDisponible)
@@ -124,6 +132,7 @@ public:
 		{
 			y += velocidadY;
 
+			//gravedad
 			velocidadY += GRAVEDAD;
 			if (y >= yBase)
 			{
@@ -132,6 +141,7 @@ public:
 
 				saltando = false;
 
+				// Al aterrizar, vuelve a tener disponible el doble salto.
 				saltoDobleDisponible = true;
 			
 			}
@@ -141,7 +151,7 @@ public:
 
 	void mostrar() override
 	{
-		RenderNivel1::instancia().Color(System::ConsoleColor::Red);
+		Capture::ForegroundColor = System::ConsoleColor::Red;
 
 		const vector<wstring>& dibujoActual =
 			escondido ? dibujoEscondida : dibujoNormal;
@@ -157,17 +167,17 @@ public:
 				// Los espacios son transparentes
 				if (caracter != L' ')
 				{
-					RenderNivel1::instancia().SetCursorPosition(
+					Capture::SetCursorPosition(
 						x + columna,
 						y + fila
 					);
 
-					RenderNivel1::instancia().Write(caracter);
+					Capture::Write(caracter);
 				}
 			}
 		}
 		
-		RenderNivel1::instancia().ResetColor();
+		Capture::ResetColor();
 
 	}
 

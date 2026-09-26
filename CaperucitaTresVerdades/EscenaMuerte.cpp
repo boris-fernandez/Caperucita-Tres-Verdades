@@ -210,7 +210,7 @@ void EscenaMuerte(const std::string& causa)
 {
     std::string mensaje;
 
-    // ---- ASCII ART DE ARRIBA (segun la causa) ----
+    // ASCII ART DE ARRIBA (segun la causa)
     if (causa == "tronco") mostrarArteTronco();
     else if (causa == "pinchos") mostrarArtePinchos();
     else if (causa == "lobo") mostrarArteLobo();
@@ -218,7 +218,7 @@ void EscenaMuerte(const std::string& causa)
 
     Console::WriteLine();
 
-    // ---- MOTIVO DE LA MUERTE ----
+    // MOTIVO DE LA MUERTE
     Console::ForegroundColor = ConsoleColor::Red;
     Console::WriteLine("> CAPERUCITA HA CAIDO...");
     Console::ForegroundColor = ConsoleColor::Gray;
@@ -226,15 +226,6 @@ void EscenaMuerte(const std::string& causa)
     std::cout << "  " << mensaje << std::endl;
     Console::WriteLine();
 
-    // ---- ASCII ART DE ABAJO (la misma causa) ----
-    if (causa == "tronco") mostrarArteTronco();
-    else if (causa == "pinchos") mostrarArtePinchos();
-    else if (causa == "lobo") mostrarArteLobo();
-    else mostrarArteGenerico(causa);
-
-    Console::WriteLine();
-
-    // ---- PROMPT DE CONTINUAR ----
     Console::ForegroundColor = ConsoleColor::DarkGray;
     Console::WriteLine("[ Presiona cualquier tecla para continuar... ]");
     Console::ResetColor();

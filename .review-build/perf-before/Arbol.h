@@ -1,5 +1,4 @@
 #pragma once
-#include "RenderNivel1.h"
 
 #include <iostream>
 #include <vector>
@@ -12,26 +11,38 @@
 using namespace std;
 using namespace System;
 
-class HuellaLobo : public ElementoMapa
+class Arbol : public ElementoMapa
 {
 private:
+
     vector<wstring> dibujo;
 
 public:
 
-    HuellaLobo(int posicionX)
+    Arbol(int posicionX)
     {
         x = posicionX;
 
         dibujo =
         {
-            L"o o",
-            L" O "
+            L"       /\\",
+            L"      /  \\",
+            L"     /    \\",
+            L"    «_    _»",
+            L"    /      \\",
+            L"   /        \\",
+            L"  «_        _»",
+            L"  /          \\",
+            L" /            \\",
+            L"«              »",
+            L" ¯¯¯¯¯|  |¯¯¯¯¯",
+            L"      |  |"
         };
 
         alto = static_cast<int>(dibujo.size());
 
         ancho = 0;
+
         for (const wstring& linea : dibujo)
         {
             if (static_cast<int>(linea.size()) > ancho)
@@ -40,21 +51,40 @@ public:
             }
         }
 
+        // Pegado al suelo
         y = Y_SUELO - alto;
+
         visible = true;
     }
+
 
     void actualizar(int velocidad) override
     {
         x -= velocidad;
+
+        if (x < -ancho)
+        {
+            // Repite el mismo grupo sin amontonar la decoracion al reciclarla.
+            x += GRUPOS_DECORACION * ESPACIO_GRUPO_DECORACION;
+        }
     }
+
 
     void mostrar() override
     {
-        if (!visible) return;
-        if (x + ancho <= 0 || x >= ANCHO_JUEGO) return;
+        if (!visible)
+        {
+            return;
+        }
 
-        RenderNivel1::instancia().Color(ConsoleColor::White);
+        // Evita posiciones inválidas
+        if (x + ancho <= 0 || x >= ANCHO_JUEGO)
+        {
+            return;
+        }
+
+        Capture::ForegroundColor =
+            ConsoleColor::Green;
 
         for (int fila = 0; fila < static_cast<int>(dibujo.size()); fila++)
         {
@@ -64,22 +94,18 @@ public:
 
                 if (caracter != L' ' && x + col >= 0 && x + col < ANCHO_JUEGO)
                 {
-                    RenderNivel1::instancia().SetCursorPosition(x + col, y + fila);
-                    RenderNivel1::instancia().Write(caracter);
+                    Capture::SetCursorPosition(x + col, y + fila);
+                    Capture::Write(caracter);
                 }
             }
         }
 
-        RenderNivel1::instancia().ResetColor();
+        Capture::ResetColor();
     }
+
 
     bool esPeligroso() override
     {
         return false;
-    }
-
-    bool activaAlertaLobo() override
-    {
-        return true;
     }
 };

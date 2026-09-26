@@ -20,15 +20,9 @@ using namespace std;
 void ejecutarNivel1()
 {
     Nivel nivel1;
-    Console::Clear();
-    // La misma cadencia de 70 ms, incluyendo el trabajo del fotograma.
-    auto reloj = System::Diagnostics::Stopwatch::StartNew();
-    auto& render = RenderNivel1::instancia();
-    render.prepararConsola();
 
     while (!nivel1.estaCompletado() && nivel1.jugadorVivo())
     {
-        reloj->Restart();
         char tecla = 0;
 
         if (_kbhit())
@@ -50,12 +44,10 @@ void ejecutarNivel1()
             break;
         }
 
-        render.iniciar();
+        Console::Clear();
         nivel1.mostrar();
-        render.presentar();
 
-        const int espera = 70 - static_cast<int>(reloj->ElapsedMilliseconds);
-        if (espera > 0) System::Threading::Thread::Sleep(espera);
+        System::Threading::Thread::Sleep(70);
     }
 
     Console::Clear();
@@ -111,6 +103,8 @@ int main()
 {
     Console::CursorVisible = false;
 
+    // Semilla para que las rocas, troncos y huellas reaparezcan con
+    // espaciados aleatorios distintos en cada partida.
     srand(static_cast<unsigned int>(time(nullptr)));
 
     PantallaInicio();

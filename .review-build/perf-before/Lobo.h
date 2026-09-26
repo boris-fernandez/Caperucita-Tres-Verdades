@@ -1,5 +1,4 @@
 #pragma once
-#include "RenderNivel1.h"
 
 #include <iostream>
 #include <vector>
@@ -16,8 +15,8 @@ class Lobo : public Entidad
 {
 private:
 
-    vector<wstring> dibujoDerecha;
-    vector<wstring> dibujoIzquierda;
+    vector<wstring> dibujoDerecha; // cruza de izquierda a derecha
+    vector<wstring> dibujoIzquierda; // cruza de derecha a izquierda (espejado)
 
     bool haciaLaDerecha;
 
@@ -28,8 +27,8 @@ public:
         dibujoDerecha =
         {
             L"              /\\/\\   ",
-            L"             '   •' ¬",
-            L"      ______/    ───' ",
+            L"             '   •' ¬", // es gracioso que el • genere sonido cada que aparece el lobo
+            L"      ______/    ───' ", // al menos es buen detalle, como un sonido de alarma xd
             L"  _┌─/          /   ",
             L" _/_/   /───|  |    ",
             L"¯¯ /_  |_    |_ |_   "
@@ -67,6 +66,7 @@ public:
     {
         haciaLaDerecha = nuevaDireccionDerecha;
 
+        // Entra por el lado opuesto al que va a salir.
         x = haciaLaDerecha ? -ancho : ANCHO_JUEGO;
     }
 
@@ -93,7 +93,7 @@ public:
 
         const vector<wstring>& dibujo = haciaLaDerecha ? dibujoDerecha : dibujoIzquierda;
 
-        RenderNivel1::instancia().Color(ConsoleColor::DarkGray);
+        Capture::ForegroundColor = ConsoleColor::DarkGray;
 
         for (int fila = 0; fila < static_cast<int>(dibujo.size()); fila++)
         {
@@ -107,13 +107,13 @@ public:
 
                     if (columna >= 0 && columna < ANCHO_JUEGO)
                     {
-                        RenderNivel1::instancia().SetCursorPosition(columna, y + fila);
-                        RenderNivel1::instancia().Write(caracter);
+                        Capture::SetCursorPosition(columna, y + fila);
+                        Capture::Write(caracter);
                     }
                 }
             }
         }
 
-        RenderNivel1::instancia().ResetColor();
+        Capture::ResetColor();
     }
 };

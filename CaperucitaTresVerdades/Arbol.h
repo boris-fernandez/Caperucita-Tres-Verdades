@@ -1,4 +1,5 @@
-﻿#pragma once
+#pragma once
+#include "RenderNivel1.h"
 
 #include <iostream>
 #include <vector>
@@ -51,7 +52,6 @@ public:
             }
         }
 
-        // Pegado al suelo
         y = Y_SUELO - alto;
 
         visible = true;
@@ -64,8 +64,8 @@ public:
 
         if (x < -ancho)
         {
-            x = ANCHO_JUEGO + GAP_MINIMO_OBSTACULO +
-                (rand() % (GAP_MAXIMO_OBSTACULO - GAP_MINIMO_OBSTACULO + 1));
+            // Repite el mismo grupo sin amontonar la decoracion al reciclarla.
+            x += GRUPOS_DECORACION * ESPACIO_GRUPO_DECORACION;
         }
     }
 
@@ -77,14 +77,12 @@ public:
             return;
         }
 
-        // Evita posiciones inválidas
-        if (x < 0 || x + ancho >= ANCHO_JUEGO)
+        if (x + ancho <= 0 || x >= ANCHO_JUEGO)
         {
             return;
         }
 
-        Console::ForegroundColor =
-            ConsoleColor::Green;
+        RenderNivel1::instancia().Color(ConsoleColor::Green);
 
         for (int fila = 0; fila < static_cast<int>(dibujo.size()); fila++)
         {
@@ -92,15 +90,15 @@ public:
             {
                 wchar_t caracter = dibujo[fila][col];
 
-                if (caracter != L' ')
+                if (caracter != L' ' && x + col >= 0 && x + col < ANCHO_JUEGO)
                 {
-                    Console::SetCursorPosition(x + col, y + fila);
-                    Console::Write(caracter);
+                    RenderNivel1::instancia().SetCursorPosition(x + col, y + fila);
+                    RenderNivel1::instancia().Write(caracter);
                 }
             }
         }
 
-        Console::ResetColor();
+        RenderNivel1::instancia().ResetColor();
     }
 
 

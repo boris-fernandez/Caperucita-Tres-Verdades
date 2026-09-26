@@ -1,5 +1,4 @@
 #pragma once
-#include "RenderNivel1.h"
 
 #include <iostream>
 #include <vector>
@@ -12,21 +11,20 @@
 using namespace std;
 using namespace System;
 
-class HuellaLobo : public ElementoMapa
+class Pinchos : public ElementoMapa
 {
 private:
     vector<wstring> dibujo;
 
 public:
 
-    HuellaLobo(int posicionX)
+    Pinchos(int posicionX)
     {
         x = posicionX;
 
         dibujo =
         {
-            L"o o",
-            L" O "
+            L"/\\ /\\"
         };
 
         alto = static_cast<int>(dibujo.size());
@@ -54,7 +52,7 @@ public:
         if (!visible) return;
         if (x + ancho <= 0 || x >= ANCHO_JUEGO) return;
 
-        RenderNivel1::instancia().Color(ConsoleColor::White);
+        Capture::ForegroundColor = ConsoleColor::Blue;
 
         for (int fila = 0; fila < static_cast<int>(dibujo.size()); fila++)
         {
@@ -64,22 +62,22 @@ public:
 
                 if (caracter != L' ' && x + col >= 0 && x + col < ANCHO_JUEGO)
                 {
-                    RenderNivel1::instancia().SetCursorPosition(x + col, y + fila);
-                    RenderNivel1::instancia().Write(caracter);
+                    Capture::SetCursorPosition(x + col, y + fila);
+                    Capture::Write(caracter);
                 }
             }
         }
 
-        RenderNivel1::instancia().ResetColor();
+        Capture::ResetColor();
     }
 
     bool esPeligroso() override
     {
-        return false;
+        return true;
     }
 
-    bool activaAlertaLobo() override
+    std::string getCausaMuerte() override
     {
-        return true;
+        return "pinchos";
     }
 };

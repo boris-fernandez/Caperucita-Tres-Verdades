@@ -50,6 +50,9 @@
     <ClInclude Include="Nivel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RenderNivel1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Arbol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
